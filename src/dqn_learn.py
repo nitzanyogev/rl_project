@@ -123,10 +123,9 @@ def dqn_learing(
 
     # Initialize target q function and q function, i.e. build the model.
     ######
-    
     Q = q_func(input_arg, num_actions)
-    # YOUR CODE HERE
-
+    target_Q = q_func(input_arg, num_actions)
+    
     ######
 
 
@@ -180,8 +179,24 @@ def dqn_learing(
         # may not yet have been initialized (but of course, the first step
         # might as well be random, since you haven't trained your net...)
         #####
-
         # YOUR CODE HERE
+        last_idx = replay_buffer.store_frame(last_obs)
+        q_input_last_obs = replay_buffer.encode_recent_observation()
+        if t > learning_starts:
+            action = select_epilson_greedy_action(Q, q_input_last_obs, t)[0][0]
+        else:
+            action = random.randrange(num_actions)
+        
+        obs, reward, done, _ = env.step(action)
+        
+        reward = max(-1.0, min(reward, 1.0))
+        
+        replay_buffer.store_effect(last_idx, action, reward, done)
+        
+        if done:
+            obs = env.reset()
+        
+        last_obs = obs
 
         #####
 
@@ -218,6 +233,24 @@ def dqn_learing(
             #      you should update every target_update_freq steps, and you may find the
             #      variable num_param_updates useful for this (it was initialized to 0)
             #####
+            obs_batch, act_batch, rew_batch, next_obs_batch, done_mask = replay_buffer.sample(batch_size)
+            
+            if USE_CUDA:
+                act_batch = act_batch.cuda()
+                rew_batch = rew_batch.cuda()
+                # done_mask = done_mask.cuda()
+            q_vals = Q(obs_batch).gather(1, act_batch.unsqueeze(1))
+            
+            # q_vals.argmax(0) * 
+            
+            
+            # traj_sample = zip(obs_batch, act_batch, rew_batch, next_obs_batch, done_mask)
+            # for obs_i, act_i, rew_i, next_o_i, done_i in traj_sample:
+                # q_update = rew_i
+                # if not done_i:
+                    # q_update = rew_i + gamma * Q(obs_i).
+            
+            
 
             pass
 
