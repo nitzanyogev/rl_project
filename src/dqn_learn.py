@@ -240,6 +240,7 @@ def dqn_learing(
                 rew_batch = rew_batch.cuda()
                 # done_mask = done_mask.cuda()
             q_vals = Q(obs_batch).gather(1, act_batch.unsqueeze(1))
+            print("HHHHHHHHHHHHHHHHHEEEEEEEEEEEEERRRRRRRRREEEEEEEEEE")
             # next_q_vals = Q(next_obs_batch)
             # next_q_vals = target_Q()
             
