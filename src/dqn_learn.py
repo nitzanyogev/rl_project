@@ -123,7 +123,8 @@ def dqn_learing(
 
     # Initialize target q function and q function, i.e. build the model.
     ######
-
+    
+    Q = q_func(input_arg, num_actions)
     # YOUR CODE HERE
 
     ######
