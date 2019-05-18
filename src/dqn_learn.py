@@ -241,7 +241,7 @@ def dqn_learing(
                 # done_mask = done_mask.cuda()
             q_vals = Q(obs_batch).gather(1, act_batch.unsqueeze(1))
             
-            # q_vals.argmax(0) *  
+            # q_vals.argmax(0) * 
             
             
             # traj_sample = zip(obs_batch, act_batch, rew_batch, next_obs_batch, done_mask)
