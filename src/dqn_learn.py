@@ -410,7 +410,7 @@ def dqn_learing(
 
     Q = q_func(input_arg, num_actions).type(dtype)
     target_Q = q_func(input_arg, num_actions).type(dtype)
-    loss_func = torch.nn.MSELoss(size_average=False, reduce=False)
+
     if USE_CUDA:
         Q = Q.cuda()
         target_Q = target_Q.cuda()
@@ -547,19 +547,13 @@ def dqn_learing(
                 tar_val = torch.addcmul(rew_batch.type(dtype),gamma, 1-done_mask.type(dtype), tar_val)
 
             # 3.b MSE
-            # d_error = torch.pow(tar_val - val.squeeze(),2).clamp_(-1,1) * -1
-            # d_error = nn.MSELoss(tar_val, val.squeeze()).clamp_(-1,1) * -1
-            d_error  = loss_func(tar_val, val.squeeze())
-            d_error = torch.clamp(d_error, min=-1, max=1)**2
-            d_error = d_error.sum() 
-            # d_error.backward()
+            bellman_e = tar_val - val.squeeze()
+            bellman_e = bellman_e.clamp(-1, 1) * -1
+            d_error = torch.pow(tar_val - val.squeeze(),2)
 
             # 3.c train Q network
             optimizer.zero_grad()
-            d_error.backward()
-            for params in Q.parameters():
-                params.grad.data.clamp_(-1, 1)
-            # val.backward(d_error.data.unsqueeze(1))
+            val.backward(d_error.data.unsqueeze(1))
             optimizer.step()
             
             num_param_updates += 1
