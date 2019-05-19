@@ -547,11 +547,15 @@ def dqn_learing(
                 tar_val = torch.addcmul(rew_batch.type(dtype),gamma, 1-done_mask.type(dtype), tar_val)
 
             # 3.b MSE
-            d_error = torch.pow(tar_val - val.squeeze(),2).clamp_(-1,1) * -1
+            # d_error = torch.pow(tar_val - val.squeeze(),2).clamp_(-1,1) * -1
+            d_error = nn.MSELoss(tar_val, val.squeeze()).clamp_(-1,1) * -1
 
             # 3.c train Q network
             optimizer.zero_grad()
-            val.backward(d_error.data.unsqueeze(1))
+            d_error.backward()
+            for params in Q.parameters():
+                params.grad.data.clamp_(-1, 1)
+            # val.backward(d_error.data.unsqueeze(1))
             optimizer.step()
             
             num_param_updates += 1
