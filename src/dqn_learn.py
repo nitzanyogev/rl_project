@@ -535,7 +535,7 @@ def dqn_learing(
                 act_batch = act_batch.cuda()
                 rew_batch = rew_batch.cuda()
                 next_obs_batch = next_obs_batch.cuda()
-                done_mask = done_mask.cuda()
+                # done_mask = done_mask.cuda()
 
             # Q network
             q_vals = Q(obs_batch)
