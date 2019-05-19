@@ -528,6 +528,8 @@ def dqn_learing(
             rew_batch = Variable(torch.from_numpy(rew_batch).type(torch.int64))
             next_obs_batch = Variable(torch.from_numpy(next_obs_batch).type(dtype) / 255.)
             done_mask = Variable(torch.from_numpy(done_mask).type(torch.int64))
+            # done_mask = Variable(torch.from_numpy(done_mask).type(torch.int64))
+            not_done_mask = Variable(torch.from_numpy(1 - done_mask)).type(dtype)
 
             if USE_CUDA:
                 obs_batch = obs_batch.cuda()
@@ -541,10 +543,15 @@ def dqn_learing(
             q_vals = q_vals.gather(dim=1, index=act_batch.unsqueeze(1))
 
             # Q target network
-            tar_val = target_Q(next_obs_batch)
-            with torch.no_grad():
-                tar_val = tar_val.max(1)[0]
-                tar_val = torch.addcmul(rew_batch.type(dtype),gamma, 1-done_mask.type(dtype), tar_val)
+            # tar_val = target_Q(next_obs_batch)
+            # with torch.no_grad():
+                # tar_val = tar_val.max(1)[0]
+                # tar_val = torch.addcmul(rew_batch.type(dtype),gamma, 1-done_mask.type(dtype), tar_val)
+            
+            next_max_q = target_Q(next_obs_batch).detach().max(1)[0]
+            next_Q_values = not_done_mask * next_max_q
+            # Compute the target of the current Q values
+            tar_val = rew_batch + (gamma * next_Q_values)
 
             # 3.b MSE
             loss = F.smooth_l1_loss(q_vals.squeeze(), tar_val)
