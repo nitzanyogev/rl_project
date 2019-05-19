@@ -527,7 +527,6 @@ def dqn_learing(
             act_batch = Variable(torch.from_numpy(act_batch).type(torch.int64))
             rew_batch = Variable(torch.from_numpy(rew_batch).type(torch.int64))
             next_obs_batch = Variable(torch.from_numpy(next_obs_batch).type(dtype) / 255.)
-            done_mask = Variable(torch.from_numpy(done_mask).type(torch.int64))
             # done_mask = Variable(torch.from_numpy(done_mask).type(torch.int64))
             not_done_mask = Variable(torch.from_numpy(1 - done_mask)).type(dtype)
 
