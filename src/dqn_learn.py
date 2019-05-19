@@ -547,7 +547,7 @@ def dqn_learing(
                 tar_val = torch.addcmul(rew_batch.type(dtype),gamma, 1-done_mask.type(dtype), tar_val)
 
             # 3.b MSE
-            loss = F.smooth_l1_loss(q_vals, tar_val)
+            loss = F.smooth_l1_loss(q_vals.squeeze(), tar_val)
             # bellman_e = tar_val - q_vals.squeeze()
             # bellman_e = bellman_e.clamp(-1, 1) * -1
             # d_error = torch.pow(tar_val - q_vals.squeeze(),2)
