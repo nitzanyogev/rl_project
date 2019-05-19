@@ -554,6 +554,7 @@ def dqn_learing(
 
             # 3.b MSE
             loss = F.smooth_l1_loss(q_vals.squeeze(), tar_val)
+            optimizer.zero_grad()
             loss.backward()
             # bellman_e = tar_val - q_vals.squeeze()
             # bellman_e = bellman_e.clamp(-1, 1) * -1
@@ -561,7 +562,7 @@ def dqn_learing(
             for params in Q.parameters():
                 params.grad.data.clamp_(-1, 1)
             # 3.c train Q network
-            optimizer.zero_grad()
+            # optimizer.zero_grad()
             # q_vals.backward(d_error.data.unsqueeze(1))
             optimizer.step()
             
