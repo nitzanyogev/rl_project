@@ -537,8 +537,8 @@ def dqn_learing(
                 done_mask = done_mask.cuda()
 
             # Q network
-            val = Q(obs_batch)
-            val = val.gather(dim=1, index=act_batch.unsqueeze(1))
+            q_vals = Q(obs_batch)
+            q_vals = q_vals.gather(dim=1, index=act_batch.unsqueeze(1))
 
             # Q target network
             tar_val = target_Q(next_obs_batch)
@@ -547,13 +547,15 @@ def dqn_learing(
                 tar_val = torch.addcmul(rew_batch.type(dtype),gamma, 1-done_mask.type(dtype), tar_val)
 
             # 3.b MSE
-            bellman_e = tar_val - val.squeeze()
-            bellman_e = bellman_e.clamp(-1, 1) * -1
-            d_error = torch.pow(tar_val - val.squeeze(),2)
-
+            loss = F.smooth_l1_loss(q_vals, tar_val)
+            # bellman_e = tar_val - q_vals.squeeze()
+            # bellman_e = bellman_e.clamp(-1, 1) * -1
+            # d_error = torch.pow(tar_val - q_vals.squeeze(),2)
+            for params in Q.parameters():
+                params.grad.data.clamp_(-1, 1)
             # 3.c train Q network
             optimizer.zero_grad()
-            val.backward(d_error.data.unsqueeze(1))
+            q_vals.backward(d_error.data.unsqueeze(1))
             optimizer.step()
             
             num_param_updates += 1
