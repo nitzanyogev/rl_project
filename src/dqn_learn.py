@@ -472,7 +472,7 @@ def dqn_learing(
         idx = replay_buffer.store_frame(last_obs)
         enc_obs = replay_buffer.encode_recent_observation()
         if t > learning_starts:
-            action = select_epilson_greedy_action(Q, enc_obs, t).item()[0]
+            action = select_epilson_greedy_action(Q, enc_obs, t).item()
         else:
             action = random.randrange(num_actions)
         
