@@ -525,49 +525,44 @@ def dqn_learing(
 
             #3.a
             obs_batch, act_batch, rew_batch, next_obs_batch, done_mask = replay_buffer.sample(batch_size)
-            obs_batch = Variable(torch.from_numpy(obs_batch).type(dtype) / 255.0)
-            act_batch = Variable(torch.from_numpy(act_batch).long())
-            rew_batch = Variable(torch.from_numpy(rew_batch))
-            next_obs_batch = Variable(torch.from_numpy(next_obs_batch).type(dtype) / 255.0)
-            done_mask = torch.from_numpy(done_mask)
+            obs_batch = Variable(torch.from_numpy(obs_batch).type(dtype) / 255.)
+            act_batch = Variable(torch.from_numpy(act_batch).type(torch.int64))
+            rew_batch = Variable(torch.from_numpy(rew_batch)  )#.type(torch.int64))
+            next_obs_batch = Variable(torch.from_numpy(next_obs_batch).type(dtype) / 255.)
+            # done_mask = Variable(torch.from_numpy(done_mask).type(torch.int64))
+            not_done_mask = Variable(torch.from_numpy(1 - done_mask)).type(dtype)
 
             if USE_CUDA:
+                # obs_batch = obs_batch.cuda()
                 act_batch = act_batch.cuda()
                 rew_batch = rew_batch.cuda()
-                done_mask = done_mask.cuda()
+                # next_obs_batch = next_obs_batch.cuda()
+                # done_mask = done_mask.cuda()
 
             # Q network
-            current_Q_values = Q(obs_batch).gather(1, act_batch.unsqueeze(1))
-            # q_vals = Q(obs_batch)
-            # q_vals = q_vals.gather(dim=1, index=act_batch.unsqueeze(1))
+            q_vals = Q(obs_batch)
+            q_vals = q_vals.gather(dim=1, index=act_batch.unsqueeze(1))
 
             # Q target network
             # tar_val = target_Q(next_obs_batch)
             # with torch.no_grad():
                 # tar_val = tar_val.max(1)[0]
                 # tar_val = torch.addcmul(rew_batch.type(dtype),gamma, 1-done_mask.type(dtype), tar_val)
-            next_max_Q_values = Variable(torch.zeros(batch_size).type(dtype))
-            # next_max_q = target_Q(next_obs_batch).detach().max(1)[0]
-            # next_Q_values = not_done_mask * next_max_q
-            next_max_Q_values[done_mask == 0] = target_Q(next_obs_batch).detach().max(1)[0]
+            
+            next_max_q = target_Q(next_obs_batch).detach().max(1)[0]
+            next_Q_values = not_done_mask * next_max_q
             # Compute the target of the current Q values
-            # tar_val = rew_batch + (gamma * next_Q_values)
-            target_Q_values = rew_batch + (gamma * next_max_Q_values)
-            bellman_error = F.smooth_l1_loss(current_Q_values.squeeze(), target_Q_values)
+            tar_val = rew_batch + (gamma * next_Q_values)
 
-            
             # 3.b MSE
-            # loss = F.smooth_l1_loss(q_vals.squeeze(), tar_val)
+            loss = F.smooth_l1_loss(q_vals.squeeze(), tar_val)
             optimizer.zero_grad()
-            
-            bellman_error.backward()
-            
-            # loss.backward()
+            loss.backward()
             # bellman_e = tar_val - q_vals.squeeze()
             # bellman_e = bellman_e.clamp(-1, 1) * -1
             # d_error = torch.pow(tar_val - q_vals.squeeze(),2)
-            for params in Q.parameters():
-                params.grad.data.clamp_(-1, 1)
+            # for params in Q.parameters():
+                # params.grad.data.clamp_(-1, 1)
             # 3.c train Q network
             # optimizer.zero_grad()
             # q_vals.backward(d_error.data.unsqueeze(1))
