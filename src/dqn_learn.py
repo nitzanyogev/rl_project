@@ -553,7 +553,7 @@ def dqn_learing(
             # Compute the target of the current Q values
             # tar_val = rew_batch + (gamma * next_Q_values)
             target_Q_values = rew_batch + (gamma * next_max_Q_values)
-            bellman_error = F.smooth_l1_loss(current_Q_values, target_Q_values)
+            bellman_error = F.smooth_l1_loss(current_Q_values.squeeze(), target_Q_values)
 
             
             # 3.b MSE
