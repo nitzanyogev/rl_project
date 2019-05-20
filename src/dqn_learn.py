@@ -476,12 +476,13 @@ def dqn_learing(
         else:
             action = random.randrange(num_actions)
         
+        reward = max(-1.0, min(reward, 1.0))
 
         obs, reward, done, info = env.step(action)
-        if done:
-            obs = env.reset()
 
         replay_buffer.store_effect(idx, action, reward, done)
+        if done:
+            obs = env.reset()
 
         last_obs = obs
 
@@ -531,10 +532,10 @@ def dqn_learing(
             not_done_mask = Variable(torch.from_numpy(1 - done_mask)).type(dtype)
 
             if USE_CUDA:
-                obs_batch = obs_batch.cuda()
+                # obs_batch = obs_batch.cuda()
                 act_batch = act_batch.cuda()
                 rew_batch = rew_batch.cuda()
-                next_obs_batch = next_obs_batch.cuda()
+                # next_obs_batch = next_obs_batch.cuda()
                 # done_mask = done_mask.cuda()
 
             # Q network
