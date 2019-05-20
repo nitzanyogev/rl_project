@@ -561,8 +561,8 @@ def dqn_learing(
             # bellman_e = tar_val - q_vals.squeeze()
             # bellman_e = bellman_e.clamp(-1, 1) * -1
             # d_error = torch.pow(tar_val - q_vals.squeeze(),2)
-            for params in Q.parameters():
-                params.grad.data.clamp_(-1, 1)
+            # for params in Q.parameters():
+                # params.grad.data.clamp_(-1, 1)
             # 3.c train Q network
             # optimizer.zero_grad()
             # q_vals.backward(d_error.data.unsqueeze(1))
