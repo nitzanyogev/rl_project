@@ -476,9 +476,10 @@ def dqn_learing(
         else:
             action = random.randrange(num_actions)
         
-        reward = max(-1.0, min(reward, 1.0))
 
         obs, reward, done, info = env.step(action)
+
+        reward = max(-1.0, min(reward, 1.0))
 
         replay_buffer.store_effect(idx, action, reward, done)
         if done:
