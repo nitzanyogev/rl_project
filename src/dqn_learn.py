@@ -128,9 +128,9 @@ def dqn_learing(
     Q = q_func(input_arg, num_actions).type(dtype)
     target_Q = q_func(input_arg, num_actions).type(dtype)
 
-	target_Q.load_state_dict(Q.state_dict())
+    target_Q.load_state_dict(Q.state_dict())
 
-	critertion = nn.MSELoss()
+    critertion = nn.MSELoss()
 
     ######
 
@@ -246,8 +246,8 @@ def dqn_learing(
             #3.a
             obs_batch, act_batch, rew_batch, next_obs_batch, done_mask = replay_buffer.sample(batch_size)
             obs_batch = Variable(torch.from_numpy(obs_batch).type(dtype) / 255.)
-			act_batch = Variable(torch.from_numpy(act_batch).long())
-			rew_batch = Variable(torch.from_numpy(rew_batch))
+            act_batch = Variable(torch.from_numpy(act_batch).long())
+            rew_batch = Variable(torch.from_numpy(rew_batch))
             next_obs_batch = Variable(torch.from_numpy(next_obs_batch).type(dtype) / 255.)
             # done_mask = Variable(torch.from_numpy(done_mask).type(torch.int64))
             not_done_mask = Variable(torch.from_numpy(1 - done_mask)).type(dtype)
@@ -266,7 +266,7 @@ def dqn_learing(
             q_vals = Q(obs_batch).gather(1, act_batch.unsqueeze(1))
             
             next_max_q = target_Q(next_obs_batch).detach().max(1)[0]
-			next_Q_values = not_done_mask * next_max_q
+            next_Q_values = not_done_mask * next_max_q
 
             # Q target network
             # tar_val = target_Q(next_obs_batch)
@@ -280,7 +280,7 @@ def dqn_learing(
             tar_val = rew_batch + (gamma * next_Q_values)
             
             bellman_error = target_Q_values - current_Q_values.squeeze(1)
-			clipped_bellman_error = bellman_error.clamp(-1, 1)
+            clipped_bellman_error = bellman_error.clamp(-1, 1)
             d_error = clipped_bellman_error * -1.0
             
             optimizer.zero_grad()
@@ -288,7 +288,7 @@ def dqn_learing(
             optimizer.step()
             
             # if(t%target_update_freq==0):
-				# target_Q.load_state_dict(Q.state_dict())
+                # target_Q.load_state_dict(Q.state_dict())
 
             # # 3.b MSE
             # loss = F.smooth_l1_loss(q_vals.squeeze(), tar_val)
