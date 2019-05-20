@@ -279,12 +279,12 @@ def dqn_learing(
             # Compute the target of the current Q values
             tar_val = rew_batch + (gamma * next_Q_values)
             
-            bellman_error = tar_val - current_Q_values.squeeze(1)
+            bellman_error = tar_val - q_vals.squeeze(1)
             clipped_bellman_error = bellman_error.clamp(-1, 1)
             d_error = clipped_bellman_error * -1.0
             
             optimizer.zero_grad()
-            current_Q_values.backward(d_error.data.unsqueeze(1))
+            q_vals.backward(d_error.data.unsqueeze(1))
             optimizer.step()
             
             # if(t%target_update_freq==0):
