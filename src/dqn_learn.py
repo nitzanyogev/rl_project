@@ -279,7 +279,7 @@ def dqn_learing(
             # Compute the target of the current Q values
             tar_val = rew_batch + (gamma * next_Q_values)
             
-            bellman_error = target_Q_values - current_Q_values.squeeze(1)
+            bellman_error = tar_val - current_Q_values.squeeze(1)
             clipped_bellman_error = bellman_error.clamp(-1, 1)
             d_error = clipped_bellman_error * -1.0
             
