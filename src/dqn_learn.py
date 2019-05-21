@@ -200,8 +200,8 @@ def dqn_learing(
 
             # Compute current Q value, q_func takes only state and output value for every state-action pair
             # We choose Q based on action taken.
-            # current_Q_values = Q(obs_batch).gather(1, act_batch.unsqueeze(1)).squeeze(1)
-            current_Q_values = Q(obs_batch).gather(1, act_batch.unsqueeze(-1)).squeeze(-1)
+            current_Q_values = Q(obs_batch).gather(1, act_batch.unsqueeze(1)).squeeze(1)
+            # current_Q_values = Q(obs_batch).gather(1, act_batch.unsqueeze(-1)).squeeze(-1)
             # Compute next Q value based on which action gives max Q values
             # Detach variable from the current graph since we don't want gradients for next Q to propagated
             # next_max_q = target_Q(next_obs_batch).max(1)[0]
