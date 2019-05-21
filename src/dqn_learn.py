@@ -122,7 +122,7 @@ def dqn_learing(
     Q = q_func(input_arg, num_actions).type(dtype)
     target_Q = q_func(input_arg, num_actions).type(dtype)
     
-    loss_func = torch.nn.MSELoss(size_average=False, reduce=False)
+    loss_func = torch.nn.MSELoss()
     
     # Construct Q network optimizer function
     optimizer = optimizer_spec.constructor(Q.parameters(), **optimizer_spec.kwargs)
@@ -195,20 +195,27 @@ def dqn_learing(
 
             # Compute current Q value, q_func takes only state and output value for every state-action pair
             # We choose Q based on action taken.
-            current_Q_values = Q(obs_batch).gather(1, act_batch.unsqueeze(1))
+            current_Q_values = Q(obs_batch).gather(1, act_batch.unsqueeze(1)).squeeze(1)
             # Compute next Q value based on which action gives max Q values
             # Detach variable from the current graph since we don't want gradients for next Q to propagated
-            next_max_q = target_Q(next_obs_batch).detach().max(1)[0]
-            next_Q_values = not_done_mask * next_max_q
+            # next_max_q = target_Q(next_obs_batch).max(1)[0]
+            # next_Q_values = not_done_mask * next_max_q
             # Compute the target of the current Q values
-            target_Q_values = rew_batch + (gamma * next_Q_values)
+            # target_Q_values = rew_batch + (gamma * next_Q_values)
 
 
-            current_Q_values=current_Q_values.squeeze(1)
+            # current_Q_values=current_Q_values.squeeze(1)
             
-            d_error = loss_func(target_Q_values, current_Q_values)
-            d_error = torch.clamp(d_error, min=-1, max=1) * -1
+            # d_error = loss_func(target_Q_values, current_Q_values)
+            # d_error = torch.clamp(d_error, min=-1, max=1) * -1
             # d_error = d_error.sum()
+            
+            
+            # state_action_values = Q(obs_batch).gather(1, actions_v.unsqueeze(-1)).squeeze(-1)
+            next_max_q = target_Q(next_states_v).max(1)[0]
+            next_max_q[done_mask] = 0.0
+
+            expected_state_action_values = next_max_q.detach() * gamma + rew_batch
             
             # # Compute Bellman error
             # bellman_error = target_Q_values - current_Q_values
@@ -217,12 +224,15 @@ def dqn_learing(
             # # Note: clipped_bellman_delta * -1 will be right gradient
             # d_error = clipped_bellman_error * -1.0
             # Clear previous gradients before backward pass
-            optimizer.zero_grad()
+            l = loss_func(current_Q_values, expected_state_action_values)
+            l.backward()
+            optimizer.step()
+            # optimizer.zero_grad()
             # run backward pass
-            current_Q_values.backward(d_error)
+            # current_Q_values.backward(d_error)
 
             # Perfom the update
-            optimizer.step()
+            # optimizer.step()
             num_param_updates += 1
 
             # Periodically update the target network by Q network to target Q network
