@@ -230,7 +230,7 @@ def dqn_learing(
             # # Note: clipped_bellman_delta * -1 will be right gradient
             # d_error = clipped_bellman_error * -1.0
             # Clear previous gradients before backward pass
-            l = loss_func(current_Q_values, expected_state_action_values)
+            l = loss_func(current_Q_values, expected_state_action_values.detach())
             l.backward()
             optimizer.step()
             # optimizer.zero_grad()
