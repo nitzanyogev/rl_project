@@ -212,7 +212,7 @@ def dqn_learing(
             
             
             # state_action_values = Q(obs_batch).gather(1, actions_v.unsqueeze(-1)).squeeze(-1)
-            next_max_q = target_Q(next_states_v).max(1)[0]
+            next_max_q = target_Q(next_obs_batch).max(1)[0]
             next_max_q[done_mask] = 0.0
 
             expected_state_action_values = next_max_q.detach() * gamma + rew_batch
