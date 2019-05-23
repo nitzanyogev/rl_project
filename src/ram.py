@@ -51,7 +51,7 @@ if __name__ == '__main__':
     env = gym.make('Pong-ram-v0')
 
     # Run training
-    seed = 0 # Use a seed of zero (you may want to randomize the seed!)
+    seed = 42 # Use a seed of zero (you may want to randomize the seed!)
     env = get_ram_env(env, seed)
 
     main(env)
