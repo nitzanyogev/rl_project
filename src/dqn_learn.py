@@ -330,6 +330,7 @@ def dqn_learing(
         Statistic["best_mean_episode_rewards"].append(best_mean_episode_reward)
 
         if t % LOG_EVERY_N_STEPS == 0 and t > learning_starts:
+            torch.save(Q.state_dict(), "params_model.pwf".format(t))
             print("Timestep %d" % (t,))
             print(f"Iteration time:{time()-iter_time:.2f}")
             iter_time = time()
