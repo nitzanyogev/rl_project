@@ -109,6 +109,7 @@ def dqn_learing(
     Statistic['parameters'] = {'replay_buffer_size':replay_buffer_size,
                                'batch_size':batch_size,
                                'gamma':gamma,
+                               'frame_history_len':frame_history_len,
                                'learning_starts':learning_starts,
                                'learning_freq':learning_freq,
                                'target_update_freq':target_update_freq,
@@ -151,10 +152,7 @@ def dqn_learing(
 
 
     # Construct Q network optimizer function
-    # optimizer = optimizer_spec.constructor(Q.parameters(), **optimizer_spec.kwargs)
-    import torch.optim as optim
-    learning_rate =  0.0001
-    optimizer = optim.Adam(Q.parameters(), lr=learning_rate)
+    optimizer = optimizer_spec.constructor(Q.parameters(), **optimizer_spec.kwargs)
 
     # Construct the replay buffer
     replay_buffer = ReplayBuffer(replay_buffer_size, frame_history_len)

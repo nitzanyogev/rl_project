@@ -1,5 +1,6 @@
 import gym
 import torch.optim as optim
+import numpy as np
 
 from dqn_model import DQN
 from dqn_learn import OptimizerSpec, dqn_learing
@@ -13,7 +14,7 @@ LEARNING_STARTS = 50000
 LEARNING_FREQ = 4
 FRAME_HISTORY_LEN = 4
 TARGER_UPDATE_FREQ = 10000
-LEARNING_RATE = 0.00025 
+LEARNING_RATE = 0.00025
 ALPHA = 0.95
 EPS = 0.01
 
@@ -29,7 +30,7 @@ def main(env, num_timesteps):
         kwargs=dict(lr=LEARNING_RATE, alpha=ALPHA, eps=EPS),
     )
 
-    exploration_schedule = LinearSchedule(1000000, 0.1)
+    exploration_schedule = LinearSchedule(3000000, 0.1)
 
     dqn_learing(
         env=env,
@@ -54,7 +55,8 @@ if __name__ == '__main__':
     task = benchmark.tasks[3]
 
     # Run training
-    seed = 42 # Use a seed of zero (you may want to randomize the seed!)
+    seed = np.random.randint(10000) # Use a seed of zero (you may want to randomize the seed!)
+    print (f"SEED NUMBER = {seed}")
     env = get_env(task, seed)
 
     main(env, task.max_timesteps)
