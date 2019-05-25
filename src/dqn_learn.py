@@ -154,7 +154,7 @@ def dqn_learing(
     # optimizer = optimizer_spec.constructor(Q.parameters(), **optimizer_spec.kwargs)
     import torch.optim as optim
     learning_rate =  0.0001
-    optimizer = optim.Adam(net.parameters(), lr=learning_rate)
+    optimizer = optim.Adam(Q.parameters(), lr=learning_rate)
 
     # Construct the replay buffer
     replay_buffer = ReplayBuffer(replay_buffer_size, frame_history_len)
