@@ -292,11 +292,11 @@ def dqn_learing(
             done_mask = Variable(torch.from_numpy(done_mask).type(torch.int64))
 
             if USE_CUDA:
-                obs_batch = obs_batch.cuda(non_blocking=True)
-                act_batch = act_batch.cuda(non_blocking=True)
-                rew_batch = rew_batch.cuda(non_blocking=True)
-                next_obs_batch = next_obs_batch.cuda(non_blocking=True)
-                done_mask = done_mask.cuda(non_blocking=True)
+                obs_batch = obs_batch.cuda()
+                act_batch = act_batch.cuda()
+                rew_batch = rew_batch.cuda()
+                next_obs_batch = next_obs_batch.cuda()
+                done_mask = done_mask.cuda()
 
             # Q network
             val = Q(obs_batch).gather(dim=1, index=act_batch.unsqueeze(1))
