@@ -145,10 +145,12 @@ def dqn_learing(
     target_Q = q_func(input_arg, num_actions).type(dtype)
     
     try:
-        Q = torch.load("params_model.pwf").type(dtype)
-        target_Q = torch.load("params_model.pwf").type(dtype)
-    except:
-        pass
+        state_dict = torch.load("params_model.pwf")['state_dict']
+        Q.load_state_dict(state_dict)
+        state_dict = torch.load("params_model.pwf")['state_dict']
+        target_Q.load_state_dict(state_dict)
+    except Exception as e:
+        print("error loading :(", e)
         
     if USE_CUDA:
         Q = Q.cuda()
