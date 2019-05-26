@@ -145,8 +145,8 @@ def dqn_learing(
     target_Q = q_func(input_arg, num_actions).type(dtype)
     
     try:
-        Q = torch.load("params_model.pwf")
-        target_Q = torch.load("params_model.pwf")
+        Q = torch.load("params_model.pwf").type(dtype)
+        target_Q = torch.load("params_model.pwf").type(dtype)
     except:
         pass
         
