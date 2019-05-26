@@ -143,7 +143,13 @@ def dqn_learing(
 
     Q = q_func(input_arg, num_actions).type(dtype)
     target_Q = q_func(input_arg, num_actions).type(dtype)
-
+    
+    try:
+        Q = torch.load("params_model.pwf")
+        target_Q = torch.load("params_model.pwf")
+    except:
+        pass
+        
     if USE_CUDA:
         Q = Q.cuda()
         target_Q = target_Q.cuda()
