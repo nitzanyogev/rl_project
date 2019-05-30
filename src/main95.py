@@ -56,7 +56,8 @@ if __name__ == '__main__':
     task = benchmark.tasks[3]
 
     # Run training
-    seed = np.random.randint(0) # Use a seed of zero (you may want to randomize the seed!)
+    # seed = np.random.randint(0) # Use a seed of zero (you may want to randomize the seed!)
+    seed = np.random.seed(0) # Use a seed of zero (you may want to randomize the seed!)
     print (f"SEED NUMBER = {seed}")
     env = get_env(task, seed)
 
