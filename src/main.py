@@ -8,7 +8,8 @@ from utils.gym import get_env, get_wrapper_by_name
 from utils.schedule import LinearSchedule
 
 BATCH_SIZE = 32
-GAMMA = 0.99
+# GAMMA = 0.99
+GAMMA = 0.9
 REPLAY_BUFFER_SIZE = 1000000
 LEARNING_STARTS = 50000
 LEARNING_FREQ = 4
