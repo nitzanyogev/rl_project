@@ -143,15 +143,7 @@ def dqn_learing(
 
     Q = q_func(input_arg, num_actions).type(dtype)
     target_Q = q_func(input_arg, num_actions).type(dtype)
-    
-    # try:
-        # state_dict = torch.load("params_model.pwf")
-        # Q.load_state_dict(state_dict)
-        # state_dict = torch.load("params_model.pwf")
-        # target_Q.load_state_dict(state_dict)
-    # except Exception as e:
-        # print("error loading :(", e)
-        
+
     if USE_CUDA:
         Q = Q.cuda()
         target_Q = target_Q.cuda()
@@ -338,7 +330,6 @@ def dqn_learing(
         Statistic["best_mean_episode_rewards"].append(best_mean_episode_reward)
 
         if t % LOG_EVERY_N_STEPS == 0 and t > learning_starts:
-            torch.save(Q.state_dict(), "params_model.pwf")
             print("Timestep %d" % (t,))
             print(f"Iteration time:{time()-iter_time:.2f}")
             iter_time = time()
