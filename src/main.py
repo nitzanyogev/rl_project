@@ -9,7 +9,7 @@ from utils.schedule import LinearSchedule
 
 BATCH_SIZE = 32
 # GAMMA = 0.99
-GAMMA = 0.9
+GAMMA = 0.97
 REPLAY_BUFFER_SIZE = 1000000
 LEARNING_STARTS = 50000
 LEARNING_FREQ = 4
